@@ -2,22 +2,22 @@
 
 **Project**: Convert 37 RAG patterns from Pinecone/OpenAI to AWS OpenSearch/Bedrock  
 **Started**: 2026-07-03  
-**Status**: 12/37 complete (32%)
+**Status**: 13/37 complete (35%)
 
 ---
 
 ## 📊 Overall Progress
 
 ```
-████████████░░░░░░░░░░░░░░░░░░░░░░░░ 32%
+█████████████░░░░░░░░░░░░░░░░░░░░░░ 35%
 ```
 
-**Completed**: 12 notebooks  
+**Completed**: 13 notebooks  
 **In Progress**: 0 notebooks  
-**Remaining**: 25 notebooks  
+**Remaining**: 24 notebooks  
 **Estimated Total Time**: ~37 hours  
-**Time Spent**: ~12 hours  
-**Time Remaining**: ~25 hours
+**Time Spent**: ~13 hours  
+**Time Remaining**: ~24 hours
 
 ---
 
@@ -35,19 +35,14 @@
 9. **09_Query_Decomposition_AWS.ipynb** - Complex query breakdown
 10. **10_Recursive_RAG_AWS.ipynb** - Iterative refinement
 
-### Phase 2: Advanced Patterns (2/12)
+### Phase 2: Advanced Patterns (3/12)
 11. **11_Multimodal_RAG_AWS.ipynb** - Text + image retrieval
 12. **12_Agentic_RAG_AWS.ipynb** - Autonomous tool use
+13. **13_Corrective_RAG_AWS.ipynb** - Self-correction with quality assessment
 
 ---
 
 ## 🚧 Priority Queue (Next 5)
-
-### 13_Corrective_RAG_AWS.ipynb (CRAG)
-- **Priority**: High
-- **Complexity**: High
-- **Est. Time**: 1.5 hours
-- **Key Features**: Self-correction, retrieval quality assessment, web search fallback
 
 ### 14_Self_RAG_AWS.ipynb
 - **Priority**: High
@@ -89,10 +84,10 @@
 9. ✅ Query Decomposition
 10. ✅ Recursive RAG
 
-### Phase 2: Advanced Patterns (2/12 complete)
+### Phase 2: Advanced Patterns (3/12 complete)
 11. ✅ Multi-modal RAG
 12. ✅ Agentic RAG
-13. ⬜ Corrective RAG (CRAG)
+13. ✅ Corrective RAG (CRAG)
 14. ⬜ Self-RAG
 15. ⬜ Tree of Thoughts RAG
 16. ⬜ Chain of Thought RAG
