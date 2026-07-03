@@ -1,0 +1,277 @@
+"""
+Semantic Movie Search Page
+Natural language search with AI-powered recommendations
+"""
+
+import streamlit as st
+import json
+import os
+import sys
+
+# Add parent directory to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.movie_search import MovieSearch
+from utils.search_history import SearchHistory
+
+st.set_page_config(
+    page_title="Semantic Movie Search",
+    page_icon="🔍",
+    layout="wide"
+)
+
+st.title("🔍 Semantic Movie Search")
+st.markdown("Find movies using natural language queries")
+
+# Load configuration
+config_path = 'config.json'
+if not os.path.exists(config_path):
+    st.error("❌ OpenSearch not configured. Please run setup first.")
+    st.code("python3 infrastructure/create_opensearch.py", language="bash")
+    st.stop()
+
+with open(config_path, 'r') as f:
+    config = json.load(f)
+
+# Initialize search (cached)
+@st.cache_resource
+def get_search_client():
+    return MovieSearch(config)
+
+try:
+    searcher = get_search_client()
+    history = SearchHistory()
+    st.success("✅ Connected to OpenSearch")
+except Exception as e:
+    st.error(f"❌ Error connecting to OpenSearch: {e}")
+    st.stop()
+
+# Sidebar - Search options
+st.sidebar.header("Search Options")
+
+search_type = st.sidebar.selectbox(
+    "Search Mode",
+    ["hybrid", "semantic"],
+    help="Hybrid combines semantic + keyword matching"
+)
+
+num_results = st.sidebar.slider(
+    "Number of Results",
+    min_value=1,
+    max_value=10,
+    value=5
+)
+
+use_claude = st.sidebar.checkbox(
+    "AI-Powered Answer",
+    value=True,
+    help="Use Claude to generate natural language answers"
+)
+
+if use_claude:
+    claude_model = st.sidebar.selectbox(
+        "Claude Model",
+        [
+            "anthropic.claude-sonnet-4-6",
+            "anthropic.claude-sonnet-5",
+            "anthropic.claude-haiku-4-5-20251001-v1:0",
+            "anthropic.claude-opus-4-8"
+        ],
+        help="Sonnet: balanced, Haiku: fast/cheap, Opus: most capable"
+    )
+else:
+    claude_model = None
+
+st.sidebar.markdown("---")
+
+# Search History Section
+st.sidebar.markdown("### 📜 Recent Searches")
+recent = history.get_history(limit=5)
+if recent:
+    for search in recent:
+        if st.sidebar.button(f"🔍 {search['query'][:30]}...", key=f"recent_{search['query']}", use_container_width=True):
+            query = search['query']
+            st.rerun()
+    if st.sidebar.button("🗑️ Clear History", use_container_width=True):
+        history.clear_history()
+        st.rerun()
+else:
+    st.sidebar.info("No recent searches")
+
+st.sidebar.markdown("---")
+
+# Saved Searches Section
+st.sidebar.markdown("### ⭐ Saved Searches")
+saved = history.get_saved_searches()
+if saved:
+    for search in saved:
+        col1, col2 = st.sidebar.columns([4, 1])
+        with col1:
+            if st.button(f"⭐ {search['name'][:25]}...", key=f"saved_{search['query']}", use_container_width=True):
+                query = search['query']
+                st.rerun()
+        with col2:
+            if st.button("❌", key=f"del_{search['query']}", use_container_width=True):
+                history.remove_saved_search(search['query'])
+                st.rerun()
+else:
+    st.sidebar.info("No saved searches")
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### Example Queries")
+st.sidebar.markdown("""
+- Movies about space exploration
+- Dark psychological thrillers
+- Feel-good comedies with friendship
+- Epic fantasy adventures
+- Time travel movies
+- Prison escape films
+""")
+
+# Main search interface
+query = st.text_input(
+    "What kind of movie are you looking for?",
+    placeholder="e.g., Movies about friendship and redemption",
+    help="Enter your search query in natural language"
+)
+
+col1, col2 = st.columns([4, 1])
+with col1:
+    search_button = st.button("🔍 Search", type="primary", use_container_width=True)
+with col2:
+    save_button = st.button("⭐ Save", use_container_width=True)
+
+if save_button and query:
+    save_name = st.text_input("Save search as:", value=query[:50])
+    if st.button("💾 Confirm Save"):
+        history.save_search(query, search_type, save_name)
+        st.success("✅ Search saved!")
+
+if search_button and query:
+    # Add to history
+    history.add_search(query, search_type)
+
+    with st.spinner(f"Searching with {search_type} mode..."):
+        try:
+            # Perform search
+            results, answer = searcher.search_and_answer(
+                query=query,
+                search_type=search_type,
+                top_k=num_results,
+                use_claude=use_claude,
+                claude_model=claude_model if use_claude else None
+            )
+
+            # Display results
+            if not results:
+                st.warning("No movies found matching your query. Try a different search.")
+            else:
+                # AI Answer
+                if answer and answer['answer']:
+                    st.markdown("### 🤖 AI Recommendation")
+                    st.info(answer['answer'])
+                    st.caption(f"Generated by {answer['model']} using {answer['num_sources']} sources")
+                    st.markdown("---")
+
+                # Search Results
+                st.markdown(f"### 🎬 Search Results ({len(results)} movies)")
+
+                # Export Options
+                export_col1, export_col2, export_col3 = st.columns(3)
+
+                with export_col1:
+                    # CSV Export
+                    import pandas as pd
+                    import io
+
+                    df = pd.DataFrame(results)
+                    csv_buffer = io.StringIO()
+                    df.to_csv(csv_buffer, index=False)
+                    csv_data = csv_buffer.getvalue()
+
+                    st.download_button(
+                        "📥 Download CSV",
+                        csv_data,
+                        f"search_results_{query[:20]}.csv",
+                        "text/csv",
+                        use_container_width=True
+                    )
+
+                with export_col2:
+                    # JSON Export
+                    json_data = json.dumps(results, indent=2)
+                    st.download_button(
+                        "📥 Download JSON",
+                        json_data,
+                        f"search_results_{query[:20]}.json",
+                        "application/json",
+                        use_container_width=True
+                    )
+
+                with export_col3:
+                    # Share URL (simplified)
+                    import urllib.parse
+                    encoded_query = urllib.parse.quote(query)
+                    share_url = f"?query={encoded_query}&type={search_type}&results={num_results}"
+
+                    if st.button("🔗 Copy Share Link", use_container_width=True):
+                        st.code(share_url, language=None)
+                        st.info("Share this URL to reproduce the search")
+
+                st.markdown("---")
+
+                for i, movie in enumerate(results, 1):
+                    with st.expander(
+                        f"{i}. {movie['title']} ({movie['year']}) - ⭐ {movie['rating']}/10",
+                        expanded=(i == 1)
+                    ):
+                        col1, col2 = st.columns([2, 1])
+
+                        with col1:
+                            st.markdown(f"**Plot:** {movie['plot']}")
+
+                            st.markdown(f"**Director:** {movie['director']}")
+
+                            actors = movie['actors']
+                            if isinstance(actors, list):
+                                actors_str = ", ".join(actors)
+                            else:
+                                actors_str = actors
+                            st.markdown(f"**Actors:** {actors_str}")
+
+                        with col2:
+                            genres = movie['genre']
+                            if isinstance(genres, list):
+                                genre_badges = " ".join([f"`{g}`" for g in genres])
+                            else:
+                                genre_badges = f"`{genres}`"
+
+                            st.markdown(f"**Genres:** {genre_badges}")
+                            st.markdown(f"**Year:** {movie['year']}")
+                            st.markdown(f"**Runtime:** {movie['runtime']} min")
+                            st.markdown(f"**Rating:** ⭐ {movie['rating']}/10")
+                            st.markdown(f"**Relevance:** {movie['search_score']:.3f}")
+
+        except Exception as e:
+            st.error(f"❌ Search error: {e}")
+            import traceback
+            st.code(traceback.format_exc())
+
+elif search_button:
+    st.warning("Please enter a search query")
+
+# Info section
+st.markdown("---")
+with st.expander("ℹ️ How It Works"):
+    st.markdown("""
+    **Semantic Search** uses vector embeddings to understand the meaning of your query:
+
+    1. **Query Embedding**: Your query is converted to a 1024-dimensional vector using Cohere Embed v4
+    2. **Vector Search**: OpenSearch finds movies with similar plot embeddings
+    3. **Hybrid Mode**: Combines semantic similarity with traditional keyword matching
+    4. **AI Answer**: Claude analyzes the results and provides personalized recommendations
+
+    **Search Tips:**
+    - Use natural language (don't just use keywords)
+    - Be specific about themes, emotions, or plot elements
+    - Try different phrasings if you don't find what you want
+    """)
