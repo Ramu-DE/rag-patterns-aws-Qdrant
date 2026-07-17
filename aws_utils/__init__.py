@@ -4,12 +4,14 @@ Shared modules for OpenSearch and Bedrock integration
 """
 
 from .opensearch_manager import OpenSearchManager
+from .qdrant_manager import QdrantManager
 from .bedrock_client import BedrockEmbeddings, BedrockLLM
 from .rag_evaluator import RAGEvaluator
 from .diagram_generator import generate_mermaid_diagram
 
 __all__ = [
     'OpenSearchManager',
+    'QdrantManager',
     'BedrockEmbeddings',
     'BedrockLLM',
     'RAGEvaluator',
