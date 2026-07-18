@@ -1,0 +1,30 @@
+name: streaming_pipeline
+version: "1.0.0"
+description: "Low-latency streaming. Hybrid retrieval + rerank + streaming tokens. No Temporal."
+ingestion:
+  doc_path: "C:/Users/Administrator/RAG/data/medicaid.pdf"
+  collection_name: "factory_streaming"
+  chunker: semantic_chunking
+  use_incremental: false
+retrieval:
+  strategy: hybrid_rrf_retrieval
+  top_k: 5
+  rerank: true
+  compress: true
+query:
+  strategy: direct
+generation:
+  agentic_mode: none
+  streaming: true
+  use_cache: true
+  max_tokens: 1024
+  temperature: 0.1
+guards:
+  retrieval_guard: true
+  generation_guard: false
+  ambiguity_guard: true
+  system_guard: false
+temporal:
+  enabled: false
+evaluation:
+  enabled: false

@@ -1,0 +1,990 @@
+{
+  "fixed_chunking": {
+    "name": "fixed_chunking",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/01_Simple_RAG.ipynb",
+    "tier": 1,
+    "description": "Fixed-size token chunking \u2014 baseline pipeline",
+    "input_schema": [
+      "raw_text"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [
+      "FM-R2"
+    ],
+    "config": {}
+  },
+  "semantic_chunking": {
+    "name": "semantic_chunking",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/02_Semantic_Chunking.ipynb",
+    "tier": 1,
+    "description": "Cosine breakpoint \u2014 variable-length semantically coherent chunks",
+    "input_schema": [
+      "raw_text"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [
+      "FM-R2"
+    ],
+    "config": {}
+  },
+  "hierarchical_chunking": {
+    "name": "hierarchical_chunking",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/03_Hierarchical_RAG.ipynb",
+    "tier": 1,
+    "description": "Multi-level chunk tree: summary \u2192 detail",
+    "input_schema": [
+      "raw_text"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count",
+      "hierarchy_map"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 180,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "parent_child_chunking": {
+    "name": "parent_child_chunking",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/04_Parent_Child_RAG.ipynb",
+    "tier": 1,
+    "description": "Index child chunks; retrieve parent for context",
+    "input_schema": [
+      "raw_text"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count",
+      "parent_map"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 180,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "sentence_window_chunking": {
+    "name": "sentence_window_chunking",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/05_Sentence_Window_RAG.ipynb",
+    "tier": 1,
+    "description": "Per-sentence index; expand \u00b1k window at retrieval",
+    "input_schema": [
+      "raw_text"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count",
+      "window_map"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R2",
+      "FM-A4"
+    ],
+    "failure_modes": [
+      "FM-R2",
+      "FM-A4"
+    ],
+    "config": {}
+  },
+  "contextual_chunking": {
+    "name": "contextual_chunking",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/06_Contextual_Retrieval.ipynb",
+    "tier": 1,
+    "description": "LLM-generated context prefix before embedding \u2014 67% fewer retrieval failures",
+    "input_schema": [
+      "raw_text"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count",
+      "context_map"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 300,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R3"
+    ],
+    "failure_modes": [
+      "FM-R3"
+    ],
+    "config": {}
+  },
+  "dense_retrieval": {
+    "name": "dense_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier1_chunking_indexing/01_Simple_RAG.ipynb",
+    "tier": 2,
+    "description": "Titan Embeddings V2 dense ANN via Qdrant",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [
+      "FM-R1",
+      "FM-R4",
+      "FM-R5"
+    ],
+    "config": {}
+  },
+  "hybrid_rrf_retrieval": {
+    "name": "hybrid_rrf_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier2_retrieval_quality/07_Hybrid_Search.ipynb",
+    "tier": 2,
+    "description": "Dense + BM25 RRF fusion \u2014 Recall@5 +17pp vs dense alone",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "rrf_scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R1"
+    ],
+    "failure_modes": [
+      "FM-R1"
+    ],
+    "config": {}
+  },
+  "hyde_retrieval": {
+    "name": "hyde_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier2_retrieval_quality/08_HyDE.ipynb",
+    "tier": 2,
+    "description": "Hypothetical Document Embeddings \u2014 query vocabulary bridge",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "hypothesis"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 90,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R4"
+    ],
+    "failure_modes": [
+      "FM-R4"
+    ],
+    "config": {}
+  },
+  "reranked_retrieval": {
+    "name": "reranked_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier2_retrieval_quality/09_Reranking.ipynb",
+    "tier": 2,
+    "description": "LLM cross-encoder reranking of initial candidates",
+    "input_schema": [
+      "query",
+      "retrieved_chunks"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "rerank_scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-G2"
+    ],
+    "failure_modes": [
+      "FM-G2"
+    ],
+    "config": {}
+  },
+  "compressed_retrieval": {
+    "name": "compressed_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier2_retrieval_quality/10_Contextual_Compression.ipynb",
+    "tier": 2,
+    "description": "Extract only relevant sentences from retrieved chunks",
+    "input_schema": [
+      "query",
+      "retrieved_chunks"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "compression_ratio"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 90,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R5"
+    ],
+    "failure_modes": [
+      "FM-R5"
+    ],
+    "config": {}
+  },
+  "filtered_retrieval": {
+    "name": "filtered_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier2_retrieval_quality/11_Metadata_Filtering.ipynb",
+    "tier": 2,
+    "description": "Pre-filter by structured metadata before ANN",
+    "input_schema": [
+      "query",
+      "collection_name",
+      "filters"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [
+      "FM-S3"
+    ],
+    "config": {}
+  },
+  "multi_doc_retrieval": {
+    "name": "multi_doc_retrieval",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier2_retrieval_quality/12_Multi_Document_RAG.ipynb",
+    "tier": 2,
+    "description": "Source-aware retrieval across heterogeneous document corpus",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "source_map"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "query_decomposition": {
+    "name": "query_decomposition",
+    "version": "1.0.0",
+    "role": "query_ops",
+    "notebook_ref": "qdrant_notebooks/tier3_query_handling/13_Query_Decomposition.ipynb",
+    "tier": 3,
+    "description": "Break complex queries into atomic sub-queries",
+    "input_schema": [
+      "query"
+    ],
+    "output_schema": [
+      "sub_queries",
+      "query"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-A3"
+    ],
+    "failure_modes": [
+      "FM-A3"
+    ],
+    "config": {}
+  },
+  "stepback_prompting": {
+    "name": "stepback_prompting",
+    "version": "1.0.0",
+    "role": "query_ops",
+    "notebook_ref": "qdrant_notebooks/tier3_query_handling/14_Step_Back_Prompting.ipynb",
+    "tier": 3,
+    "description": "Abstract query to higher-level principle before retrieval",
+    "input_schema": [
+      "query"
+    ],
+    "output_schema": [
+      "abstract_query",
+      "query"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "fusion_retrieval": {
+    "name": "fusion_retrieval",
+    "version": "1.0.0",
+    "role": "query_ops",
+    "notebook_ref": "qdrant_notebooks/tier3_query_handling/15_Fusion_Retrieval.ipynb",
+    "tier": 3,
+    "description": "Generate 4 query variants; retrieve each; RRF merge",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "query_variants"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R1"
+    ],
+    "failure_modes": [
+      "FM-R1"
+    ],
+    "config": {}
+  },
+  "cot_rag": {
+    "name": "cot_rag",
+    "version": "1.0.0",
+    "role": "query_ops",
+    "notebook_ref": "qdrant_notebooks/tier3_query_handling/16_Chain_of_Thought_RAG.ipynb",
+    "tier": 3,
+    "description": "Interleave reasoning steps with retrieval",
+    "input_schema": [
+      "query",
+      "retrieved_chunks"
+    ],
+    "output_schema": [
+      "answer",
+      "reasoning_trace"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "react_rag": {
+    "name": "react_rag",
+    "version": "1.0.0",
+    "role": "query_ops",
+    "notebook_ref": "qdrant_notebooks/tier3_query_handling/17_ReAct_RAG.ipynb",
+    "tier": 3,
+    "description": "Reasoning + Acting: LLM decides when to retrieve",
+    "input_schema": [
+      "query"
+    ],
+    "output_schema": [
+      "answer",
+      "action_trace"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 240,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "corrective_rag": {
+    "name": "corrective_rag",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier4_agentic/18_Corrective_RAG.ipynb",
+    "tier": 4,
+    "description": "Retrieval evaluator triggers correction or fallback",
+    "input_schema": [
+      "query",
+      "retrieved_chunks"
+    ],
+    "output_schema": [
+      "answer",
+      "correction_log"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 180,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-S4"
+    ],
+    "failure_modes": [
+      "FM-S4"
+    ],
+    "config": {}
+  },
+  "self_rag": {
+    "name": "self_rag",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier4_agentic/19_Self_RAG.ipynb",
+    "tier": 4,
+    "description": "4 reflection tokens: Retrieve / IsRel / IsSup / IsUse",
+    "input_schema": [
+      "query",
+      "retrieved_chunks"
+    ],
+    "output_schema": [
+      "answer",
+      "reflection_tokens",
+      "citation_scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 300,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-G1"
+    ],
+    "failure_modes": [
+      "FM-G1"
+    ],
+    "config": {}
+  },
+  "iterative_rag": {
+    "name": "iterative_rag",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier4_agentic/20_Iterative_RAG.ipynb",
+    "tier": 4,
+    "description": "Multiple retrieval rounds guided by gap analysis",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "answer",
+      "iteration_log"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 600,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "recursive_rag": {
+    "name": "recursive_rag",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier4_agentic/21_Recursive_RAG.ipynb",
+    "tier": 4,
+    "description": "Recursively decompose until all sub-queries are answerable",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "answer",
+      "decomp_tree"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 600,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "agentic_rag": {
+    "name": "agentic_rag",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier4_agentic/22_Agentic_RAG.ipynb",
+    "tier": 4,
+    "description": "Autonomous agent with multiple retrieval tools",
+    "input_schema": [
+      "query"
+    ],
+    "output_schema": [
+      "answer",
+      "tool_calls",
+      "agent_trace"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 900,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "memory_augmented_rag": {
+    "name": "memory_augmented_rag",
+    "version": "1.0.0",
+    "role": "memory",
+    "notebook_ref": "qdrant_notebooks/tier5_memory_conversation/23_Memory_Augmented_RAG.ipynb",
+    "tier": 5,
+    "description": "Short-term + long-term memory alongside document retrieval",
+    "input_schema": [
+      "query",
+      "session_id"
+    ],
+    "output_schema": [
+      "answer",
+      "memory_hits",
+      "updated_memory"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "multiturn_rag": {
+    "name": "multiturn_rag",
+    "version": "1.0.0",
+    "role": "memory",
+    "notebook_ref": "qdrant_notebooks/tier5_memory_conversation/24_Multi_Turn_Conversational_RAG.ipynb",
+    "tier": 5,
+    "description": "History-aware query rewriter for follow-up resolution",
+    "input_schema": [
+      "query",
+      "conversation_history"
+    ],
+    "output_schema": [
+      "answer",
+      "rewritten_query"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 90,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-A4"
+    ],
+    "failure_modes": [
+      "FM-A4"
+    ],
+    "config": {}
+  },
+  "ensemble_rag": {
+    "name": "ensemble_rag",
+    "version": "1.0.0",
+    "role": "router",
+    "notebook_ref": "qdrant_notebooks/tier6_ensemble_meta/25_Ensemble_RAG.ipynb",
+    "tier": 6,
+    "description": "Run multiple retrieval strategies; vote/merge results",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "answer",
+      "strategy_scores",
+      "ensemble_log"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 300,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "adaptive_rag": {
+    "name": "adaptive_rag",
+    "version": "1.0.0",
+    "role": "router",
+    "notebook_ref": "qdrant_notebooks/tier6_ensemble_meta/26_Adaptive_RAG.ipynb",
+    "tier": 6,
+    "description": "Query classifier routes to optimal retrieval strategy",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "answer",
+      "chosen_strategy",
+      "routing_reason"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "streaming_rag": {
+    "name": "streaming_rag",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier7_production/27_Streaming_RAG.ipynb",
+    "tier": 7,
+    "description": "Stream LLM tokens \u2014 lowest TTFT",
+    "input_schema": [
+      "query",
+      "retrieved_chunks"
+    ],
+    "output_schema": [
+      "answer_stream",
+      "ttft_ms",
+      "tokens_per_sec"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": true,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "caching_rag": {
+    "name": "caching_rag",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier7_production/28_Caching_RAG.ipynb",
+    "tier": 7,
+    "description": "Semantic cache: near-duplicate query hits cache",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "answer",
+      "cache_hit",
+      "cache_latency_ms"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "evaluation_rag": {
+    "name": "evaluation_rag",
+    "version": "1.0.0",
+    "role": "evaluator",
+    "notebook_ref": "qdrant_notebooks/tier7_production/29_Evaluation_RAG.ipynb",
+    "tier": 7,
+    "description": "RAGAS 4-metric scoring on every run",
+    "input_schema": [
+      "query",
+      "answer",
+      "retrieved_chunks",
+      "ground_truth"
+    ],
+    "output_schema": [
+      "faithfulness",
+      "answer_relevancy",
+      "context_precision",
+      "context_recall"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 180,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "complete_pipeline": {
+    "name": "complete_pipeline",
+    "version": "1.0.0",
+    "role": "generator",
+    "notebook_ref": "qdrant_notebooks/tier7_production/30_Complete_Pipeline_RAG.ipynb",
+    "tier": 7,
+    "description": "All Tier 1\u20137 components in one production pipeline",
+    "input_schema": [
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "answer",
+      "pipeline_trace",
+      "ragas_scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 600,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "incremental_rag": {
+    "name": "incremental_rag",
+    "version": "1.0.0",
+    "role": "chunker",
+    "notebook_ref": "qdrant_notebooks/tier8_incremental/31_Incremental_RAG.ipynb",
+    "tier": 8,
+    "description": "SHA-256 page manifest + diff engine \u2014 90%+ embed savings on unchanged pages",
+    "input_schema": [
+      "raw_text",
+      "doc_id",
+      "collection_name"
+    ],
+    "output_schema": [
+      "chunks",
+      "chunk_count",
+      "manifest",
+      "pages_changed"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 300,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-S1",
+      "FM-R6"
+    ],
+    "failure_modes": [
+      "FM-S1",
+      "FM-R6"
+    ],
+    "config": {}
+  },
+  "multitenant_rag": {
+    "name": "multitenant_rag",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier9_multi_tenant/32_Multi_Tenant_RAG.ipynb",
+    "tier": 9,
+    "description": "Payload-based tenant isolation \u2014 FieldCondition on every query",
+    "input_schema": [
+      "query",
+      "collection_name",
+      "tenant_id"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-S3"
+    ],
+    "failure_modes": [
+      "FM-S3"
+    ],
+    "config": {}
+  },
+  "federated_rag": {
+    "name": "federated_rag",
+    "version": "1.0.0",
+    "role": "retriever",
+    "notebook_ref": "qdrant_notebooks/tier9_multi_tenant/33_Federated_RAG.ipynb",
+    "tier": 9,
+    "description": "Parallel fan-out across collections + RRF merge + LLM router",
+    "input_schema": [
+      "query",
+      "federation_config"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "scores",
+      "federate_scores"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 120,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [],
+    "failure_modes": [],
+    "config": {}
+  },
+  "retrieval_guard": {
+    "name": "retrieval_guard",
+    "version": "1.0.0",
+    "role": "guard",
+    "notebook_ref": "research/failure_simulations/FM1_Retrieval_Failures.ipynb",
+    "tier": 1,
+    "description": "FM-R1\u2013R6: vocab gap / boundary / context / HyDE / K-dilution / stale detectors",
+    "input_schema": [
+      "retrieved_chunks",
+      "query",
+      "collection_name"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "guard_log"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-R1",
+      "FM-R2",
+      "FM-R3",
+      "FM-R4",
+      "FM-R5",
+      "FM-R6"
+    ],
+    "failure_modes": [],
+    "config": {}
+  },
+  "generation_guard": {
+    "name": "generation_guard",
+    "version": "1.0.0",
+    "role": "guard",
+    "notebook_ref": "research/failure_simulations/FM2_Generation_Failures.ipynb",
+    "tier": 1,
+    "description": "FM-G1\u2013G5: faithfulness / lost-in-middle / over-reliance / multi-hop / counterfactual",
+    "input_schema": [
+      "answer",
+      "retrieved_chunks",
+      "query"
+    ],
+    "output_schema": [
+      "answer",
+      "guard_log",
+      "faithfulness_score"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 90,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-G1",
+      "FM-G2",
+      "FM-G3",
+      "FM-G4",
+      "FM-G5"
+    ],
+    "failure_modes": [],
+    "config": {}
+  },
+  "ambiguity_guard": {
+    "name": "ambiguity_guard",
+    "version": "1.0.0",
+    "role": "guard",
+    "notebook_ref": "research/failure_simulations/FM3_Ambiguity_Failures.ipynb",
+    "tier": 1,
+    "description": "FM-A1\u2013A5: negation rewrite / temporal / multi-intent / coreference / scope",
+    "input_schema": [
+      "query"
+    ],
+    "output_schema": [
+      "query",
+      "guard_log",
+      "rewrite_applied"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 45,
+    "is_async": true,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-A1",
+      "FM-A2",
+      "FM-A3",
+      "FM-A4",
+      "FM-A5"
+    ],
+    "failure_modes": [],
+    "config": {}
+  },
+  "system_guard": {
+    "name": "system_guard",
+    "version": "1.0.0",
+    "role": "guard",
+    "notebook_ref": "research/failure_simulations/FM4_System_Failures.ipynb",
+    "tier": 1,
+    "description": "FM-S1\u2013S5: index drift / prompt injection / PII leakage / cascade / fragmentation",
+    "input_schema": [
+      "retrieved_chunks",
+      "query",
+      "tenant_id"
+    ],
+    "output_schema": [
+      "retrieved_chunks",
+      "query",
+      "guard_log"
+    ],
+    "max_retries": 3,
+    "timeout_secs": 60,
+    "is_async": false,
+    "is_streaming": false,
+    "guards_applied": [
+      "FM-S1",
+      "FM-S2",
+      "FM-S3",
+      "FM-S4",
+      "FM-S5"
+    ],
+    "failure_modes": [],
+    "config": {}
+  }
+}
