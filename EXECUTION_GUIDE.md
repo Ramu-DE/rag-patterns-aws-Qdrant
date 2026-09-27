@@ -144,7 +144,6 @@ Executed with:
 
 All outputs saved in notebook cells
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
 # Push to GitHub
 git push origin main

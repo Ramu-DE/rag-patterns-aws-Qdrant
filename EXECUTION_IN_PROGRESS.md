@@ -92,7 +92,6 @@ All notebooks executed successfully with AWS:
 
 Outputs saved in all cells
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
 git push origin main
 ```

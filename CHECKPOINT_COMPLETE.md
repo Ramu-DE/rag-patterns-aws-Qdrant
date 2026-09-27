@@ -97,7 +97,6 @@ Configuration:
 - Embeddings: amazon.titan-embed-text-v2:0
 - Region: us-west-2
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
 # Push to GitHub
 git push origin main

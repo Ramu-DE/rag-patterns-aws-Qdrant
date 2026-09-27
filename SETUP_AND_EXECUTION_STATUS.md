@@ -125,7 +125,6 @@ Executed with working AWS configuration:
 - Embeddings: amazon.titan-embed-text-v2:0
 - All outputs saved in cells
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
 # Push
 git push origin main

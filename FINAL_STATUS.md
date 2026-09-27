@@ -139,7 +139,6 @@ All notebooks:
 
 Total: 37/37 patterns (100% complete)
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
 # Push
 git push origin main
